@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Aggie Island</title>
+    <link rel="stylesheet" href="stylesheet.css">
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+	
+	<!--feel free to embelish, but ensure you don't disrupt playability-->
+	<style>
+        body{
+			text-align:center;
+		}
+		img{
+			display: block;
+			margin: auto;
+		}
+	</style>
+</head>
+<body>
+    <h1 id="heading">Find the buried treasure!</h1>
+    
+    <img id="map" width=800 height=600 src="https://ruinexplorer.github.io/Pirate-Map-USU-Campus.png">
+    
+    <p id="distance">Click on the map to search for the Treasure!</p>
+    <p>The game is over after 50 clicks</p>
+    
+    <script>
+    	var width=800;
+    	var height=600;
+    	var clicks=0;
+    	var sideAverage=700;
+
+		var randomLocation=function(size){
+			return Math.floor(Math.random()*size)
+		};
+		var target={
+			x:randomLocation(width),
+			y:randomLocation(height)
+		};
+
+		document.getElementById("map").onclick=function(event){
+			clicks++;
+			if(clicks==50){
+				alert("Game over, matey! Walk the plank or click the map to try again.");
+				document.getElementById("distance").innerHTML="Click on the map to search for the Treasure!";
+				clicks=0;
+				target={
+					x:randomLocation(width),
+					y:randomLocation(height)
+				};
+			}
+			else{
+				var distance=getDistance(event, target);
+				if(distance/sideAverage<.02){
+					winCondition();
+				}
+				else{
+					var hint=getDistanceHint(distance);
+					document.getElementById("distance").innerHTML="You are "+hint+" The click count is "+clicks;
+				}
+			}
+			
+		};
+
+		var getDistance=function(event, target){
+			var diffX=event.offsetX-target.x;
+			var diffY=event.offsetY-target.y;
+			return Math.sqrt((diffX*diffX)+(diffY*diffY));
+		};
+
+		var getDistanceHint=function(distance){
+			var hint;
+		
+			if(distance/sideAverage<.025){
+				hint="boiling hot!";
+			}
+			else if(distance/sideAverage<.05){
+				hint="really hot!";
+			}
+			else if(distance/sideAverage<.10){
+				hint="hot.";
+			}
+			else if(distance/sideAverage<.20){
+				hint="warm.";
+			}
+			else if(distance/sideAverage<.40){
+				hint="cold.";
+			}
+			else if(distance/sideAverage<.80){
+				hint="really cold!";
+			}
+			else {
+				hint="freezing!";
+			}
+			return hint;
+		};
+
+		var winCondition=function(){
+			var sentence=statement();
+			alert("You've won in "+clicks+" clicks! "+sentence+" Click the map to play again.");
+			document.getElementById("distance").innerHTML="Click on the map to search for the Treasure!";
+			clicks=0;
+			target={
+				x:randomLocation(width),
+				y:randomLocation(height)
+			};
+			
+		};
+		var statement=function(){
+			var progress;
+			if(clicks<10){
+				progress="Aye, that was great!";
+			}
+			else if(clicks<25){
+				progress="Ship shape!";
+			}
+			else if(clicks<40){
+				progress="Arr matey, ye be needing some practice!";
+			}
+			else {
+				progress="Aye, best stick to swabbing the deck!";
+			}
+			return progress;
+		}
+
+    </script>
+</body>
+</html>
